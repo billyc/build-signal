@@ -2,7 +2,7 @@
 # Based on: Jean Lucas <jean@4ray.co>
 
 # bash strict mode - fail when things go wrong
-set -euo pipefail
+set -euox pipefail
 IFS=$'\n\t'
 
 SRCDIR=`pwd`
@@ -21,7 +21,8 @@ wget https://github.com/atom/node-spellchecker/archive/613ff91dd2d9a5ee0e86be8a3
   cd $SRCDIR/Signal-Desktop
 
 # fix spellchecker
-  sed -r 's#("spellchecker": ").*"#\1file:'"${srcdir}"'/613ff91dd2d9a5ee0e86be8a3682beecc4e94887.tar.gz"#' -i package.json
+  cd $SRCDIR/Signal-Desktop
+  sed -r 's#("spellchecker": ").*"#\1file:'"${SRCDIR}"'/613ff91dd2d9a5ee0e86be8a3682beecc4e94887.tar.gz"#' -i package.json
 
 # use good electron
   sed -r 's#("electron": ").*"#\1'9.0.2'"#' -i package.json
@@ -45,13 +46,14 @@ wget https://github.com/atom/node-spellchecker/archive/613ff91dd2d9a5ee0e86be8a3
   cd $SRCDIR/Signal-Desktop
 
 # archictecture build flags
-  [[ $CARCH == "aarch64"  ]] && CFLAGS=`echo $CFLAGS | sed -e 's/-march=armv8-a//'` && CXXFLAGS="$CFLAGS"
+CFLAGS=`echo $CFLAGS | sed -e 's/-march=armv8-a//'` && CXXFLAGS="$CFLAGS"
 
-  # We can't read the release date from git so we use SOURCE_DATE_EPOCH instead
+# We can't read the release date from git so we use SOURCE_DATE_EPOCH instead
   patch --forward --strip=1 --input="${SRCDIR}/expire-from-source-date-epoch.patch"
 
-  yarn install
+yarn install
 
+exit 0
 
 source_aarch64=(
   $pkgname-$pkgver.tar.gz::https://github.com/signalapp/$_pkgname/archive/v$pkgver.tar.gz
