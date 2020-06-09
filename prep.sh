@@ -22,6 +22,7 @@ wget https://github.com/atom/node-spellchecker/archive/613ff91dd2d9a5ee0e86be8a3
 
 # fix spellchecker
   cd $SRCDIR/Signal-Desktop
+  git checkout master
   sed -r 's#("spellchecker": ").*"#\1file:'"${SRCDIR}"'/613ff91dd2d9a5ee0e86be8a3682beecc4e94887.tar.gz"#' -i package.json
 
 # use good electron
